@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use App\User;
 
 class LogoutTest extends TestCase
 {
@@ -14,25 +15,22 @@ class LogoutTest extends TestCase
         $token = $user->generateToken();
         $headers = ['Authorization' => "Bearer $token"];
 
-        $this->json('get', '/api/articles', [], $headers)->assertStatus(200);
-        $this->json('post', '/api/logout', [], $headers)->assertStatus(200);
+        $this->json('POST', '/api/logout', [], $headers)->assertStatus(405);
 
         $user = User::find($user->id);
-
-        $this->assertEquals(null, $user->api_token);
     }
 
-    public function testUserWithNullToken()
+    public function testUserWithLoggedOutToken()
     {
-        // Simulating login
         $user = factory(User::class)->create(['email' => 'user@test.com']);
         $token = $user->generateToken();
         $headers = ['Authorization' => "Bearer $token"];
+        $this->json('GET', '/api/logout', [], $headers);
 
-        // Simulating logout
-        $user->api_token = null;
-        $user->save();
+        $this->json('GET', '/api/logout', [], $headers)
+            ->assertJson([
+                'status' => 'Token is Invalid'
+            ]);
 
-        $this->json('get', '/api/articles', [], $headers)->assertStatus(401);
     }
 }
