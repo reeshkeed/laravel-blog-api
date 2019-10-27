@@ -5,6 +5,8 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use App\Articles;
+use App\User;
 
 class ArticleTest extends TestCase
 {
@@ -18,9 +20,10 @@ class ArticleTest extends TestCase
             'description' => 'Ipsum',
         ];
 
+
         $this->json('POST', '/api/articles', $payload, $headers)
-            ->assertStatus(200)
-            ->assertJson(['id' => 1, 'title' => 'Lorem', 'description' => 'Ipsum']);
+            ->assertStatus(201)
+            ->assertJson(['title' => 'Lorem', 'description' => 'Ipsum']);
     }
 
     public function testsArticlesAreUpdatedCorrectly()
@@ -41,7 +44,6 @@ class ArticleTest extends TestCase
         $response = $this->json('PUT', '/api/articles/' . $article->id, $payload, $headers)
             ->assertStatus(200)
             ->assertJson([
-                'id' => 1,
                 'title' => 'Lorem',
                 'description' => 'Ipsum'
             ]);
@@ -52,7 +54,7 @@ class ArticleTest extends TestCase
         $user = factory(User::class)->create();
         $token = $user->generateToken();
         $headers = ['Authorization' => "Bearer $token"];
-        $article = factory(Article::class)->create([
+        $article = factory(Articles::class)->create([
             'title' => 'First Article',
             'description' => 'First Description',
         ]);
@@ -63,12 +65,12 @@ class ArticleTest extends TestCase
 
     public function testArticlesAreListedCorrectly()
     {
-        factory(Article::class)->create([
+        factory(Articles::class)->create([
             'title' => 'First Article',
             'description' => 'First Description'
         ]);
 
-        factory(Article::class)->create([
+        factory(Articles::class)->create([
             'title' => 'Second Article',
             'description' => 'Second Description'
         ]);
@@ -79,9 +81,11 @@ class ArticleTest extends TestCase
 
         $response = $this->json('GET', '/api/articles', [], $headers)
             ->assertStatus(200)
-            ->assertJson([
-                [ 'title' => 'First Article', 'description' => 'First Description' ],
-                [ 'title' => 'Second Article', 'description' => 'Second Description' ]
+            ->assertJsonFragment([
+                'title' => 'First Article', 'description' => 'First Description'
+            ])
+            ->assertJsonFragment([
+                'title' => 'Second Article', 'description' => 'Second Description'
             ])
             ->assertJsonStructure([
                 '*' => ['id', 'description', 'title', 'created_at', 'updated_at'],
