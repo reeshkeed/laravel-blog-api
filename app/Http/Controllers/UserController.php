@@ -36,7 +36,7 @@ class UserController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors()->toJson(), 400);
+            return response()->json($validator->errors(), 400);
         }
 
         $user = User::create([
@@ -78,7 +78,7 @@ class UserController extends Controller
 
     public function logout(){
         JWTAuth::invalidate();
-        
+
         return response()->json([
             'statusCode' => 200,
             'statusMessage' => 'success',
