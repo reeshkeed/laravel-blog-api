@@ -5,39 +5,41 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use App\User;
 
 class RegisterTest extends TestCase
 {
     public function testsRegistersSuccessfully()
     {
         $payload = [
-            'username' => 'john',
             'name' => 'John Doe',
+            'username' => 'john',
             'email' => 'john@testuser.com',
             'password' => 'john123'
         ];
 
-        $this->json('post', '/api/register', $payload)
+        $this->json('POST', '/api/register', $payload)
             ->assertStatus(201)
             ->assertJsonStructure([
-                'data' => [
+                'user' => [
                     'id',
-                    'username',
                     'name',
+                    'username',
                     'email',
                     'created_at',
                     'updated_at',
-                    'api_token',
                 ],
+                'token'
             ]);;
     }
 
     public function testsRequiresPasswordEmailAndName()
     {
-        $this->json('post', '/api/register')
-            ->assertStatus(422)
+        $this->json('POST', '/api/register')
+            ->assertStatus(400)
             ->assertJson([
                 'name' => ['The name field is required.'],
+                'username' => ['The username field is required.'],
                 'email' => ['The email field is required.'],
                 'password' => ['The password field is required.'],
             ]);
