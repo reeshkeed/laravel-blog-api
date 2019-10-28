@@ -9,7 +9,7 @@ class ArticleController extends Controller
 {
     public function index()
     {
-        return Articles::all();
+        return Articles::orderBy('id', 'DESC')->get();
     }
 
     public function show(Articles $article)
