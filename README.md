@@ -1,14 +1,15 @@
 # laravel-blog-api
-Backend api for blog-site
+Backend api for nuxt-blog-site
 
-### Project setup
-```sh
-$ npm install
-```
+### Front-End
+Clone front-end at [nuxt-blog-site](https://github.com/reeshkeed/nuxt-blog-site)
 
+### Install dependencies
 ```
 $ composer install
 ```
+
+### Start server
 
 ```
 $ php artisan serve
@@ -18,6 +19,13 @@ $ php artisan serve
 Configure your .env file.
 
 ### Migrate database
-```sh
+```
 $ php artisan migrate
+```
+
+### Database Seed
+To generate dummy article data.
+
+```
+$ php artisan db:seed
 ```
