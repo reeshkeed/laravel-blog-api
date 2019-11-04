@@ -14,7 +14,7 @@ class LoginTest extends TestCase
         $this->json('POST', 'api/login')
             ->assertStatus(400)
             ->assertJson([
-                'error' => 'invalid_credentials'
+                'error' => 'Invalid username or password.'
             ]);
     }
 
